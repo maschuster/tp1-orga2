@@ -31,6 +31,14 @@ void test_strings(FILE *pfile) {
     fprintf(pfile,"\n");
     strDelete(a);
     strDelete(b);
+    // cmp
+    fprintf(pfile,"==> Cmp\n");
+    char* texts[5] = {"sar","23","taaa","tbb","tix"};
+    for(int i=0; i<5; i++) {
+        for(int j=0; j<5; j++) {
+            fprintf(pfile,"cmp(%s,%s) -> %i\n",texts[i],texts[j],strCmp(texts[i],texts[j]));
+        }
+    }
 }
 
 int main (void){

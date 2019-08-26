@@ -67,6 +67,38 @@ strClone:
     ret
 
 strCmp:
+.ciclo:
+    mov cl, [rdi]
+    mov dl, [rsi]
+    sub cl, dl
+    jg .ganaA
+    jl .ganaB
+    cmp [rdi], byte 0
+    je .terminaA
+    cmp [rsi], byte 0
+    je .terminaB
+    inc rdi
+    inc rsi
+    jmp .ciclo
+.ganaA:
+    mov rax, -1
+    jmp .fin
+.ganaB:
+    mov rax, 1
+    jmp .fin
+.terminaA:
+    cmp [rsi], byte 0
+    je .empate
+    mov rax, 1
+    jmp .fin
+.terminaB:
+    cmp [rdi], byte 0
+    je .empate
+    mov rax, -1
+    jmp .fin
+.empate:
+    mov rax, 0
+.fin:    
     ret
 
 strConcat:
