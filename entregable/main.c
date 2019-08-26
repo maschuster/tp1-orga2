@@ -31,6 +31,24 @@ void test_strings(FILE *pfile) {
     fprintf(pfile,"\n");
     strDelete(a);
     strDelete(b);
+    // concat
+    fprintf(pfile,"==> Concat\n");
+    a = strClone("perro_");
+    b = strClone("loco");
+    fprintf(pfile,"%i\n",strLen(a));
+    fprintf(pfile,"%i\n",strLen(b));
+    c = strConcat(a,b);
+    strPrint(c,pfile);
+    fprintf(pfile,"\n");
+    c = strConcat(c,strClone(""));
+    strPrint(c,pfile);
+    fprintf(pfile,"\n");
+    c = strConcat(strClone(""),c);
+    strPrint(c,pfile);
+    fprintf(pfile,"\n");
+    c = strConcat(c,c);
+    strPrint(c,pfile);
+    fprintf(pfile,"\n");
     // cmp
     fprintf(pfile,"==> Cmp\n");
     char* texts[5] = {"sar","23","taaa","tbb","tix"};
