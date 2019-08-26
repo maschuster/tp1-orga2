@@ -1,5 +1,7 @@
 
 section .rodata
+ch0 db 0
+null: db "NULL"
 
 section .text
 
@@ -28,9 +30,40 @@ global hashTableDeleteSlot
 global hashTableDelete
 
 strLen:
-    ret
+        xor rax, rax    ;registro contador
+.ciclo: mov cl, [rdi + rax*1]
+        cmp cl, 0       ;comparo con 0
+        je .fin
+        inc rax         ;incremento contador
+        jmp .ciclo
+.fin:   ret
+
 
 strClone:
+    push rbp
+    mov rbp, rsp
+
+    call strLen
+    mov rcx, rax ;longitud string
+    mov rdx, rdi ;inicio string parámetro
+    
+    mov rdi, rax
+    inc rdi
+    push rcx
+    push rdx
+    call malloc
+    pop rdx
+    pop rcx
+    xor r8, r8
+
+.ciclo:
+    mov dil, [rdx + r8]
+    mov [rax + r8], dil
+    inc r8
+    cmp [rdx + r8], byte 0
+    jne .ciclo
+    mov [rax +r8], byte 0
+    pop rbp
     ret
 
 strCmp:
@@ -40,11 +73,34 @@ strConcat:
     ret
 
 strDelete:
+    call free
     ret
  
 strPrint:
+    push rbp
+    mov rbp, rsp
+    call strLen
+    mov rdx, rdi
+    mov rdi, rsi
+    xor rsi, rsi
+    cmp rax, 0
+    je .esNull
+.noEsNull:
+    mov rsi, rdx
+    call fprintf
+    jmp .fin
+.esNull:
+    mov rsi, null
+    call fprintf
+.fin:
+    pop rbp
     ret
-    
+
+
+
+
+
+
 listNew:
     ret
 
@@ -71,6 +127,12 @@ listDelete:
 
 listPrint:
     ret
+
+
+
+
+
+
 
 hashTableNew:
     ret

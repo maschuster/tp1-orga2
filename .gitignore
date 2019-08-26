@@ -1,0 +1,13 @@
+entregable.tar.xz
+entregable/ejec
+entregable/lib.o
+entregable/lib_asm.o
+entregable/lib_c.o
+entregable/main.o
+entregable/main
+entregable/salida.caso.propios.txt
+entregable/salida.caso1.txt
+entregable/salida.caso2.txt
+entregable/salida.caso3.txt
+entregable/tester
+
