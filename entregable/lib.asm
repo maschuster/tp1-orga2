@@ -51,28 +51,28 @@ strClone:
     mov rbp, rsp
 
     call strLen
-    mov rcx, rax ;longitud string
-    mov rdx, rdi ;inicio string parámetro
+    mov rcx, rax    ;longitud string
+    mov rdx, rdi    ;inicio string parámetro
     
-    mov rdi, rax
-    inc rdi
-    push rcx
-    push rdx
+    mov rdi, rax    ;longitud string
+    inc rdi         ;longitud nuevo string contando el 0 del final
+    push rcx        ;guardo inicio string parámetro
+    push rdx        ;guardo longitud string
     call malloc
     pop rdx
     pop rcx
 
-    xor r8, r8
-    cmp [rdx], byte 0
-    je .fin
+    xor r8, r8      ;inicializo contador
+    cmp [rdx], byte 0;chequeo si la longitud es 0
+    je .fin         ;si la long es 0 voy al fin
 .ciclo:
-    mov dil, [rdx + r8]
-    mov [rax + r8], dil
-    inc r8
-    cmp [rdx + r8], byte 0
+    mov dil, [rdx + r8]     ;guardo letra temporalmente
+    mov [rax + r8], dil     ;escribo la letra en el nuevo string
+    inc r8                  ;incremnto contador
+    cmp [rdx + r8], byte 0  ;reviso si terminé de recorrer el string
     jne .ciclo
 .fin:    
-    mov [rax + r8], byte 0
+    mov [rax + r8], byte 0  ;si vengo del salto, pongo un 0 en la posición del malloc pedida. Si vengo del ciclo solo pongo 0 al final.
     pop rbp
     ret
 
@@ -161,14 +161,24 @@ strConcat:
     jne .cicloB
 
     mov [rax + rcx], byte 0    ;termino el string
+    cmp rdi, rsi
+    je .Iguales
     push rax
     push rsi
     call free                  ;libero memoria stringA
     pop rdi
-    push rcx
+    push rcx    ;CAMBIAR POR ADD RSP, 8
     call free                  ;libero memoria stringB
-    pop rcx
+    pop rcx    ;CAMBIAR POR SUB RSP, 8
     pop rax
+    jmp .fin
+.Iguales:
+    push rax
+    push rcx    ;CAMBIAR POR ADD RSP, 8
+    call free                  ;libero memoria stringB
+    pop rcx    ;CAMBIAR POR SUB RSP, 8
+    pop rax
+.fin:
     pop rbp
     ret
 

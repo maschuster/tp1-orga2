@@ -3,8 +3,34 @@
 /** STRING **/
 
 char* strSubstring(char* pString, uint32_t inicio, uint32_t fin) {
+    char* newStr;
+    int len = strLen(pString);//Esto vale si es la de asm, no? (Ver enunciado que dice que no puede usarse la de C)
+    if (inicio > fin){
+        newStr = strClone(pString);
+        free(pString);
+        return newStr;
+    }
+    if(inicio > len){
+        free(pString);
+        newStr = malloc(1);
+        *newStr = 0;
+        free(pString);
+        return newStr;
+    }else if (fin > len){
+        newStr = malloc(len-inicio + 2); // +1 o +2?
+        while(inicio <= len + 1){   //EL +1 es por el 0 que termina el string
+            newStr[inicio] = pString[inicio];
+            inicio++;
+        }
+    }else{
+        newStr = malloc(fin-inicio + 2);// +1 o +2?
+        while(inicio <= fin + 1){   //EL +1 es por el 0 que termina el string
+            newStr[inicio] = pString[inicio];
+            inicio++;
+        }
+    }
 
-    return 0;
+    return newStr;
 }
 
 /** Lista **/
