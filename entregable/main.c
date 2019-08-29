@@ -19,6 +19,7 @@ bool testStrLen(){
     return true;
 }
 
+/** STRINGS **/
 void test_strings(FILE *pfile) {
     char *a, *b, *c;
     // clone
@@ -38,7 +39,6 @@ void test_strings(FILE *pfile) {
     fprintf(pfile,"%i\n",strLen(a));
     fprintf(pfile,"%i\n",strLen(b));
     c = strConcat(a,b);
-    //c=strClone("asd");
     strPrint(c,pfile);
     fprintf(pfile,"\n");
     c = strConcat(c,strClone(""));
