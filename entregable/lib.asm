@@ -56,8 +56,8 @@ strClone:
     
     mov rdi, rax    ;longitud string
     inc rdi         ;longitud nuevo string contando el 0 del final
-    push rcx        ;guardo inicio string parámetro
-    push rdx        ;guardo longitud string
+    push rcx        ;guardo longitud string
+    push rdx        ;guardo inicio string parámetro
     call malloc
     pop rdx
     pop rcx
@@ -127,10 +127,10 @@ strConcat:
     mov rsi, rdx    ;posicion stringA
     push rcx
     call strLen
-    pop rcx
+    pop rcx         ;longitud stringA
     mov rdx, rax    ;longitud stringB
     add rax, rcx    ;tamaño nuevo string
-    inc rax         ;tamaño nuevo string
+    inc rax         ;tamaño nuevo string para pedir memoria
 
     push rdi
     push rsi
@@ -141,42 +141,36 @@ strConcat:
     pop rdx         ;longitud stringB
     pop rcx         ;longitud stringA
     pop rsi         ;posicion stringA
-    pop rdi         ;posicion stringB
-
-    xor r9, r9
-.cicloA:
-    mov r10b, [rsi + r9]
-    mov [rax + r9], r10b       ;indexo con el contador y el puntero de inicio de string
-    inc r9
-    cmp [rsi + r9], byte 0     ;verifico si terminó el string 
-    jne .cicloA
-
-    xor r9, r9                 ;reinicio el contador
-.cicloB:
-    mov r10b, [rdi + r9]
-    mov [rax + rcx], r10b      ;indexo con el tamaño del stringA y el contador
-    inc r9
-    inc rcx
-    cmp [rdi + r9], byte 0     ;verifico si terminó el string
-    jne .cicloB
-
+    mov rdi, rax    ;pongo en rdi la posición donde quiero poner stringA y luego concatenar stringB
+    call strCopyFromTo  ;copioStringA
+    mov r8, rsi     ;posicion stringA
+    pop rsi         ;posicion stringB
+    add rdi, rcx    ;agrego offset de stringA
+    call strCopyFromTo  ;copioStringB
+    sub rdi, rcx    ;quito offset stringA
+    add rcx, rdx    ;agrego longitud stringB
     mov [rax + rcx], byte 0    ;termino el string
-    cmp rdi, rsi
+
+    mov rax, rdi    ;posicion nuevo string
+    cmp rsi, r8     ;comparo posiciones stringB y stringA
     je .Iguales
+.liberoAmbos:
     push rax
     push rsi
-    call free                  ;libero memoria stringA
-    pop rdi
-    push rcx    ;CAMBIAR POR ADD RSP, 8
-    call free                  ;libero memoria stringB
-    pop rcx    ;CAMBIAR POR SUB RSP, 8
-    pop rax
+    mov rdi, r8     ;posicion stringA a liberar
+    call free
+    pop rdi         ;posicion stringB a liberar
+    sub rsp, 8      ;alineo pila
+    call free
+    add rsp, 8      ;alineo pila
+    pop rax         ;inicio nuevo string
     jmp .fin
 .Iguales:
-    push rax
-    push rcx    ;CAMBIAR POR ADD RSP, 8
-    call free                  ;libero memoria stringB
-    pop rcx    ;CAMBIAR POR SUB RSP, 8
+    push rax        ;guardo posicion nuevo string
+    sub rsp, 8      ;alineo pila
+    mov rdi, rsi    ;posicion stringA = posicion stringB
+    call free
+    add rsp, 8      ;alineo pila
     pop rax
 .fin:
     pop rbp
@@ -184,6 +178,19 @@ strConcat:
 
 
 
+strCopyFromTo:
+    ;RDI HACIA DONDE COPIO
+    ;RSI DESDE DONDE COPIO
+    xor r9, r9
+.ciclo:
+    cmp [rsi + r9], byte 0     ;verifico si terminó el string 
+    je .fin
+    mov r10b, [rsi + r9]
+    mov [rdi + r9], r10b       ;indexo con el contador y el puntero de inicio de string
+    inc r9
+    jmp .ciclo
+.fin:
+    ret
 
 
 strDelete:

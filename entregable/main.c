@@ -38,6 +38,7 @@ void test_strings(FILE *pfile) {
     fprintf(pfile,"%i\n",strLen(a));
     fprintf(pfile,"%i\n",strLen(b));
     c = strConcat(a,b);
+    //c=strClone("asd");
     strPrint(c,pfile);
     fprintf(pfile,"\n");
     c = strConcat(c,strClone(""));
@@ -49,7 +50,6 @@ void test_strings(FILE *pfile) {
     c = strConcat(c,c);
     strPrint(c,pfile);
     fprintf(pfile,"\n");
-    /*
     // Substring
     fprintf(pfile,"==> Substring\n");
     fprintf(pfile,"%i\n",strLen(c));
@@ -65,7 +65,6 @@ void test_strings(FILE *pfile) {
         fprintf(pfile,"\n");
     }
     strDelete(c);
-    */
     // cmp
     fprintf(pfile,"==> Cmp\n");
     char* texts[5] = {"sar","23","taaa","tbb","tix"};
