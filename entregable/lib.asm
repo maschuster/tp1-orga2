@@ -335,12 +335,63 @@ listRemove:
 listRemoveFirst:
     ;rdi <- lista
     ;rsi <- funcDelete
+    cmp qword [rdi + lista_offset_first], NULL  ;me fijo si es vacia
+    je .fin
+
+    push rbp
+	mov rbp, rsp
     
+    mov rcx, [rdi + lista_offset_first]; rcx <- primer nodo
+    mov rdx, [rcx + nodo_offset_next]; rdx <- nodoSig
+    mov [rdi + lista_offset_first], rdx; apunto el first al nodo siguiente (si rdx era NULL, ya puse el first en null)
+
+    cmp rdx, qword NULL;    si rdx es null entonces había 1 solo nodo y al borrarlo el last debe quedar en null
+    je .unicoElem
+     
+.multiplesElem:
+    mov qword [rdx + nodo_offset_prev], NULL;   pongo en null el antecesor
+    jmp .borrar
+.unicoElem:
+    mov qword [rdi + lista_offset_last], NULL; pongo el last en null
+.borrar:
+    cmp qword rsi, 0
+    je .fin
+    mov rdi, [rdx + nodo_offset_dato]
+    jmp rsi
+    pop rbp
+.fin:
     ret
 
 
 
 listRemoveLast:
+    ;rdi <- lista
+    ;rsi <- funcDelete
+    cmp qword [rdi + lista_offset_first], NULL  ;me fijo si es vacia
+    je .fin
+
+    push rbp
+	mov rbp, rsp
+    
+    mov rcx, [rdi + lista_offset_last]; rcx <- ultimo nodo
+    mov rdx, [rcx + nodo_offset_prev]; rdx <- nodoPrev
+    mov [rdi + lista_offset_last], rdx; apunto el last al nodo anterior (si rdx era NULL, ya puse el last en null)
+
+    cmp rdx, qword NULL;    si rdx es null entonces había 1 solo nodo y al borrarlo el last debe quedar en null
+    je .unicoElem
+     
+.multiplesElem:
+    mov qword [rdx + nodo_offset_next], NULL;   pongo en null el sucesor
+    jmp .borrar
+.unicoElem:
+    mov qword [rdi + lista_offset_first], NULL; pongo el last en null
+.borrar:
+    cmp qword rsi, 0
+    je .fin
+    mov rdi, [rdx + nodo_offset_dato]
+    jmp rsi
+    pop rbp
+.fin:
     ret
 
 
