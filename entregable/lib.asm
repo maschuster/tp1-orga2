@@ -28,6 +28,18 @@ global hashTableAdd
 global hashTableDeleteSlot
 global hashTableDelete
 
+%define NULL 0
+; OFFSET NODO
+%define nodo_offset_dato 0
+%define nodo_offset_next 8
+%define nodo_offset_prev 16
+; OFFSET LISTA
+%define lista_offset_first 0
+%define lista_offset_last 8
+; TAMAÑO NODO
+%define tam_nodo 24
+; TAMAÑO LISTA
+%define tam_lista 16
 
 
 
@@ -41,8 +53,6 @@ strLen:
         inc rax         ;incremento contador
         jmp .ciclo
 .fin:   ret
-
-
 
 
 
@@ -78,8 +88,6 @@ strClone:
 
 
 
-
-
 strCmp:
 .ciclo:
     mov cl, [rdi]
@@ -112,8 +120,6 @@ strCmp:
     mov rax, 0
 .fin:    
     ret
-
-
 
 
 strConcat:
@@ -176,8 +182,6 @@ strConcat:
     pop rbp
     ret
 
-
-
 strCopyFromTo:
     ;RDI HACIA DONDE COPIO
     ;RSI DESDE DONDE COPIO
@@ -196,8 +200,6 @@ strCopyFromTo:
 strDelete:
     call free
     ret
- 
-
 
 
 strPrint:
@@ -226,30 +228,130 @@ strPrint:
 ;/////////////////////////////////////////////////////LISTAS////////////////////////////////////////////////////////////////////
 
 listNew:
+    push rbp
+    mov rbp, rsp
+
+    mov rdi, tam_lista                      ;pido la memoria necesaria par auna lista
+    call malloc
+    mov qword [rax + lista_offset_first], NULL    ;pongo el first en null
+    mov qword [rax + lista_offset_last], NULL     ;pongo el last en null
+
+    pop rbp
     ret
+
+
 
 listAddFirst:
-    ret
+; 	rdi = lista* lista
+; 	rsi = void* data
+	push rbp
+	mov rbp, rsp
+	; preservo registros r12 y r13, ya que los voy a usar
+	push r12
+	push r13
+	; tengo que guardar los valores de rdi y rsi ya que voy a llamar a malloc
+	mov r12, rdi;   puntero a lista
+	mov r13, rsi;   puntero a dato
+	
+	; pido memoria para un nuevo nodo
+	mov rdi, tam_nodo
+	call malloc
+
+	; guardo los datos correspondientes al nuevo nodo
+	mov [rax + nodo_offset_dato], r13;  pongo el puntero al dato 
+    mov qword [rax + nodo_offset_prev], NULL; pongo NULL en anterior (pues es el primero)
+	mov rdi, [r12+lista_offset_first];  guardo el puntero al primer elem
+
+    cmp rdi, NULL; me fijo si la lista era vacía
+    je .listaVacia
+	mov [rax + nodo_offset_next], rdi;  pongo como próximo al antiguo primer elemento
+    mov [rdi + nodo_offset_prev], rax;  pongo al nuevo nodo como predecesor del antiguo primero.
+    mov [r12+lista_offset_first], rax;   apunto el first de la lista al nuevo nodo
+    jmp .fin
+
+    ; actualizo la información de la lista agregando como primer (y ultimo si es vacia) al nuevo nodo.
+.listaVacia:
+	mov [r12+lista_offset_first], rax;   apunto el first de la lista al nuevo nodo
+    mov [r12+lista_offset_last], rax;    apunto el last de la lista al nuevo nodo
+    mov qword [rax + nodo_offset_next], NULL; pongo NULL el siguiente (pues es vacia)
+.fin:
+	pop r13
+	pop r12
+	pop rbp
+	ret
+
 
 listAddLast:
-    ret
+; 	rdi = lista* lista
+; 	rsi = void* data
+	push rbp
+	mov rbp, rsp
+	; preservo registros r12 y r13, ya que los voy a usar
+	push r12
+	push r13
+	; tengo que guardar los valores de rdi y rsi ya que voy a llamar a malloc
+	mov r12, rdi;   puntero a lista
+	mov r13, rsi;   puntero a dato
+	
+	; pido memoria para un nuevo nodo
+	mov rdi, tam_nodo
+	call malloc
+
+	; guardo los datos correspondientes al nuevo nodo
+	mov [rax + nodo_offset_dato], r13;  guardo el puntero al dato 
+    mov qword [rax + nodo_offset_next], NULL; pongo NULL en siguiente (pues es el ultimo)
+	mov rdi, [r12+lista_offset_last];  guardo el puntero al ultimo elem
+
+    cmp rdi, NULL; me fijo si la lista era vacía
+    je .listaVacia
+	mov [rax + nodo_offset_prev], rdi;  pongo como anterior al antiguo ultimo elemento
+    mov [rdi + nodo_offset_next], rax;  pongo al nuevo nodo como sucesor del antiguo ultimo.
+    mov [r12+lista_offset_last], rax;   apunto el last de la lista al nuevo nodo
+    jmp .fin
+
+    ; actualizo la información de la lista agregando como ultimo (y primer si es vacia) al nuevo nodo.
+.listaVacia:
+	mov [r12+lista_offset_first], rax;   apunto el first de la lista al nuevo nodo
+    mov [r12+lista_offset_last], rax;    apunto el last de la lista al nuevo nodo
+    mov qword [rax + nodo_offset_prev], NULL; pongo NULL en anterior (pues es vacia)
+.fin:
+	pop r13
+	pop r12
+	pop rbp
+	ret
+
+
 
 listAdd:
     ret
 
+
+
 listRemove:
     ret
 
+
+
 listRemoveFirst:
+    ;rdi <- lista
+    ;rsi <- funcDelete
+    
     ret
+
+
 
 listRemoveLast:
     ret
 
+
+
 listDelete:
     ret
 
+
+
 listPrint:
+
     ret
 
 
