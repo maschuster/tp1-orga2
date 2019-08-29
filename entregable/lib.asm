@@ -354,10 +354,17 @@ listRemoveFirst:
 .unicoElem:
     mov qword [rdi + lista_offset_last], NULL; pongo el last en null
 .borrar:
+    mov rdi, rcx
     cmp qword rsi, 0
-    je .fin
-    mov rdi, [rdx + nodo_offset_dato]
-    jmp rsi
+    je .borroNodo
+    push rdi
+    sub rsp, 8
+    mov rdi, [rcx + nodo_offset_dato]
+    jmp [rsi]
+    add rsp, 8
+    pop rdi
+.borroNodo:
+    call free
     pop rbp
 .fin:
     ret
@@ -373,7 +380,7 @@ listRemoveLast:
     push rbp
 	mov rbp, rsp
     
-    mov rcx, [rdi + lista_offset_last]; rcx <- ultimo nodo
+    mov rcx, [rdi + lista_offset_last]; rcx <- ultimo nodo a borrar
     mov rdx, [rcx + nodo_offset_prev]; rdx <- nodoPrev
     mov [rdi + lista_offset_last], rdx; apunto el last al nodo anterior (si rdx era NULL, ya puse el last en null)
 
@@ -386,10 +393,17 @@ listRemoveLast:
 .unicoElem:
     mov qword [rdi + lista_offset_first], NULL; pongo el last en null
 .borrar:
+    mov rdi, rcx
     cmp qword rsi, 0
-    je .fin
-    mov rdi, [rdx + nodo_offset_dato]
-    jmp rsi
+    je .borroNodo
+    push rdi
+    sub rsp, 8
+    mov rdi, [rcx + nodo_offset_dato]
+    jmp [rsi]
+    add rsp, 8
+    pop rdi
+.borroNodo:
+    call free
     pop rbp
 .fin:
     ret
