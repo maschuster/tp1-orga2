@@ -1,6 +1,10 @@
 
 section .rodata
 null: db 'NULL', 0
+dataPointer: db '%p', 0
+corcheteIzq: db '[', 0
+corcheteDer: db ']', 0
+comma: db ',' , 0
 
 section .text
 
@@ -207,12 +211,12 @@ strPrint:
     mov rbp, rsp
     call strLen
     mov rdx, rdi
-    mov rdi, rsi
+    mov rdi, rsi;   rdi <- pFile
     xor rsi, rsi
     cmp rax, 0
     je .esNull
 .noEsNull:
-    mov rsi, rdx
+    mov rsi, rdx;   rsi <- char*
     call fprintf
     jmp .fin
 .esNull:
@@ -231,7 +235,7 @@ listNew:
     push rbp
     mov rbp, rsp
 
-    mov rdi, tam_lista                      ;pido la memoria necesaria par auna lista
+    mov rdi, tam_lista                      ;pido la memoria necesaria para una lista
     call malloc
     mov qword [rax + lista_offset_first], NULL    ;pongo el first en null
     mov qword [rax + lista_offset_last], NULL     ;pongo el last en null
@@ -411,12 +415,74 @@ listRemoveLast:
 
 
 listDelete:
+
     ret
 
 
 
-listPrint:
+listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
+    ;rdi <- lista
+    ;rsi <- pFile
+    ;rdx <- funcPrint
+    push rbp
+	mov rbp, rsp
 
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov r12, rsi; r12 <- pFile*
+    mov r13, rdx; r13 <- funcPrint
+    mov r14, [rdi + lista_offset_first]; r14 <- primerNodo
+    mov r15, rdi
+
+    ;PONGO EL CORCHETE [
+    mov rdi, r12;   rdi <- pFile*
+    mov rsi, corcheteIzq
+    call fprintf
+
+    cmp qword [r15 + lista_offset_first], NULL;    me fijo si la lista es vacía
+    je .fin
+    
+    cmp qword r13, NULL;    me fijo si funcPrint es 0
+    je .imprimirDir
+.imprimirDatos:
+    mov rdi, [r14 + nodo_offset_dato]; rdi <- dato*
+    mov rsi, r12;   rsi <- pFile
+    call r13;  salto a función print
+    cmp qword [r14 + nodo_offset_next], NULL;   me fijo si llegue al final
+    je .fin
+    ;pongo la coma
+    mov rdi, r12;   rdi <- pFile*
+    mov rsi, comma
+    call fprintf
+    ;busco el proximo nodo
+    mov r14, [r14 + nodo_offset_next]
+    jmp .imprimirDatos
+.imprimirDir:
+    mov rdx, [r14 + nodo_offset_dato]; rdx <- dato*
+    mov rsi, dataPointer;   rsi <- "%p"
+    mov rdi, r12;   rdi <- pFile*
+    call fprintf
+    cmp qword [r14 + nodo_offset_next], NULL;   me fijo si llegue al final
+    je .fin
+    ;pongo la coma
+    mov rdi, r12;   rdi <- pFile*
+    mov rsi, comma
+    call fprintf
+    ;busco el proximo nodo
+    mov r14, [r14 + nodo_offset_next]
+    jmp .imprimirDir
+.fin:
+    mov rdi, r12;   rdi <- pFile*
+    mov rsi, corcheteDer
+    call fprintf
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret
 
 
