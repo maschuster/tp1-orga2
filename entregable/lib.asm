@@ -364,7 +364,7 @@ listRemoveFirst:
     push rdi
     sub rsp, 8
     mov rdi, [rcx + nodo_offset_dato]
-    jmp [rsi]
+    call rsi
     add rsp, 8
     pop rdi
 .borroNodo:
@@ -403,7 +403,7 @@ listRemoveLast:
     push rdi
     sub rsp, 8
     mov rdi, [rcx + nodo_offset_dato]
-    jmp [rsi]
+    call rsi
     add rsp, 8
     pop rdi
 .borroNodo:
@@ -415,7 +415,30 @@ listRemoveLast:
 
 
 listDelete:
+    ;rdi <- lista
+    ;rsi <- funcDelete
+    push rbp
+	mov rbp, rsp
 
+    push r12
+    push r14
+
+    mov r12, rdi;   r12 <- lista
+    mov r14, rsi;   r14 <- funcDelete
+.ciclo:
+    cmp qword [r12 + lista_offset_first], NULL
+    je .borrarLista
+    mov rdi, r12
+    mov rsi, r14
+    call listRemoveFirst
+    jmp .ciclo
+.borrarLista:
+    mov rdi, r12
+    call free
+.fin:
+    pop r14
+    pop r12
+    pop rbp
     ret
 
 
@@ -472,7 +495,7 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
     mov rsi, comma
     call fprintf
     ;busco el proximo nodo
-    mov r14, [r14 + nodo_offset_next]
+    mov r14, [r14 + nodo_offset_next] 
     jmp .imprimirDir
 .fin:
     mov rdi, r12;   rdi <- pFile*
