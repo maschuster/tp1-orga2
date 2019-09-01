@@ -331,8 +331,83 @@ listAdd:
 
 
 
+
 listRemove:
+    ;rdi <- lista*
+    ;rsi <- data*
+    ;rdx <- funcCmp*
+    ;rcx <- funcDelete*
+    push rbp
+	mov rbp, rsp
+
+    push r12
+    push r13
+    push r14
+    push r15
+    push rbx
+
+    mov r13, rsi; r13  <- data*
+    mov r14, rdx; r14  <- funcCmp*
+    mov r15, rcx; r15  <- funcDelete*
+    mov rdx, rdi; rdx  <- lista*
+    lea r12, [rdi + lista_offset_first]; r12  <- lista* (puntero a puntSig)
+    mov rbx, [r12]; rbx <- actual
+
+.recorrer:
+    cmp qword rbx, NULL;    me fijo si el actual es NULL
+    je .fin
+
+    mov rdi, [rbx + nodo_offset_dato]
+    mov rsi, r13
+    push rdx
+    call r14; llamo a la función para comparar
+    pop rdx
+
+    cmp byte al, NULL; me fijo si funCmp dio 0 y debo borrarlo
+    je .deleteCmp
+
+    lea r12, [rbx + nodo_offset_next]
+    jmp .seguir
+.deleteCmp:
+    cmp qword r15, NULL
+    je .actualizarNodos
+.borrarNodoyDato:
+    mov rdi, [rbx + nodo_offset_dato]; libero memoria del dato
+    push rdx
+    call r15; libero memoria del dato
+    pop rdx
+.actualizarNodos:
+    mov r8, [rbx + nodo_offset_next]; tomo el puntero al nodo siguiente
+    mov [r12], r8;actualizo el puntero a siguiente
+    
+    mov r9, [rbx + nodo_offset_prev]; tomo el puntero al nodo anterior
+    ;OJO SI R8 ES NULL PORQUE SIGNIFICA QUE TERMINÓ
+    cmp qword r8, NULL
+    je .cambiarLast
+    mov [r8 + nodo_offset_prev], r9; actualizo el puntero a anterior del nodo siguiente
+    jmp .borrar
+.cambiarLast:
+    mov [rdx + lista_offset_last], r9
+.borrar:
+    mov rdi, rbx; libero memoria del nodo
+    push rdx
+    call free; libero memoria del nodo
+    pop rdx
+.seguir:
+    mov rbx, [r12]; avanzo el nodo
+    jmp .recorrer
+.fin:
+;    mov [rdx + lista_offset_last], rbx
+    pop rbx
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret
+
+
+
 
 
 
