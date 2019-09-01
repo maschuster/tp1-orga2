@@ -26,7 +26,8 @@ void test_list(FILE *pfile) {
     listAddLast(l1,strClone("ULTIMO"));
     listRemoveFirst(l1, (funcDelete_t*)&strDelete);
     c = strClone("ULTIMO");
-    listRemove(l1, c, (funcCmp_t*)&strCmp, (funcDelete_t*)&strDelete);
+    listAdd(l1,strClone("PRIMERO"),(funcCmp_t*)&strCmp);
+    //listRemove(l1, c, (funcCmp_t*)&strCmp, (funcDelete_t*)&strDelete);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
         /*
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
