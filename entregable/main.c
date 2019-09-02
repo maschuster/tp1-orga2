@@ -9,8 +9,38 @@
 
 char* strings[10] = {"aa","bb","dd","ff","00","zz","cc","ee","gg","hh"};
 
-void test_hashTable(FILE *pfile){
-    
+
+/** hashTable **/
+void test_hashTable(FILE *pfile) {
+    char *a, *b, *c;
+    hashTable_t *n;
+    n = hashTableNew(32, (funcHash_t*)&strHash);
+    /*
+    // strHash
+    fprintf(pfile,"==> strHash\n");
+    fprintf(pfile,"abeja=%i\n", strHash("abeja"));
+    fprintf(pfile,"arco=%i\n", strHash("arco"));
+    fprintf(pfile,"casa=%i\n", strHash("casa"));
+    fprintf(pfile,"dado=%i\n", strHash("dado"));
+    // hashTableAdd
+    fprintf(pfile,"==> hashTableAdd\n");
+    n = hashTableNew(32, (funcHash_t*)&strHash);
+    for(int s=0;s<64;s++) {
+        for(int i=0;i<10;i++) {
+            hashTableAdd(n, strClone(strings[i]));}}
+    // hashTableRemoveAll
+    fprintf(pfile,"==> hashTableRemoveAll\n");
+    for(int i=5;i<10;i++) {
+        a = strClone(strings[i]);
+        hashTableRemoveAll(n,a,(funcCmp_t*)&strCmp,(funcDelete_t*)&strDelete);
+        strDelete(a);}
+    // hashTableDeleteSlot
+    fprintf(pfile,"==> hashTableDeleteSlot\n");
+    for(int i=50;i<56;i++) {
+        hashTableDeleteSlot(n,i,(funcDelete_t*)&strDelete);}
+    hashTablePrint(n,pfile,(funcPrint_t*)&strPrint);
+    hashTableDelete(n,(funcDelete_t*)&strDelete);
+    */
 }
 
 
@@ -236,7 +266,7 @@ void test_strings(FILE *pfile) {
 
 int main (void){
     FILE *pfile = fopen("salida.caso.propios.txt","w");
-    //test_hashTable(pfile);
+    test_hashTable(pfile);
     test_strings(pfile);
     test_list(pfile);
     fclose(pfile);

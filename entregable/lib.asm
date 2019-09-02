@@ -46,6 +46,12 @@ global hashTableDelete
 ; TAMAÑO LISTA
 %define tam_lista 16
 
+;Hash Table
+%define hTable_offset_array 0
+%define hTable_offset_size 8
+%define hTable_offset_funHash 16
+;tamaño hTable
+%define tam_hash 24
 
 
 ;/////////////////////////////////////////////////////STRING////////////////////////////////////////////////////////////////////
@@ -656,14 +662,70 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
 
 
 hashTableNew:
+    ;edi <- size (int32)
+    ;rsi <- funHash*
+    push rbp
+    mov rbp, rsp
 
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov r12d, edi;  r12d <- size (int32)
+    mov r13, rsi;   r13 <- funHash*
+
+    mov rdi, tam_hash
+    call malloc
+    mov r14, rax
+
+    mov [r14 + hTable_offset_funHash], r13
+    mov [r14 + hTable_offset_size], r12d
+    ; ESTO HAY QUE SETEARLO DESPUES: 
+.armarArray:
+    mov dword eax, 8;pongo 8 porque necesito 8 bytes para tener un puntero a lista
+    mul r12d; multiplico por el tamaño indicado en esi (int32)
+    mov edi, edx; guardo la parte alta
+    shl rdi, 32; shifteo 32 bits para poner ahora la parte baja
+    mov edi, eax; pongo la parte baja del numero
+
+    call malloc; pido la memoria necesaria
+    mov r15, rax; r15 <- listArray
+    mov [r14 + hTable_offset_array], r15
+
+    xor rcx, rcx; limpio contador
+.inicializarListas:
+    cmp r12d, ecx
+    je .fin
+    push rcx
+    sub rsp, 8
+    call listNew
+    add rsp, 8
+    pop rcx
+    mov [r15 + rcx*8], rax
+    inc rcx
+    jmp .inicializarListas
+.fin:
+    mov rax, r14
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret
 
 hashTableAdd:
+    ;rdi <- hTable*
+    ;rsi <- data*
     ret
     
 hashTableDeleteSlot:
+    ;rdi <- hTable*
+    ;rsi <- data*
+    ;rdx <- funDelete*
     ret
 
 hashTableDelete:
+    ;rdi <- hTable*
+    ;rsi <- funDelete*
     ret
