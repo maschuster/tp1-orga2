@@ -508,8 +508,8 @@ listRemoveFirst:
 
 
 listRemoveLast:
-    ;rdi <- lista
-    ;rsi <- funcDelete
+    ;rdi <- lista*
+    ;rsi <- funcDelete*
     cmp qword [rdi + lista_offset_first], NULL  ;me fijo si es vacia
     je .fin
 
@@ -527,7 +527,7 @@ listRemoveLast:
     mov qword [rdx + nodo_offset_next], NULL;   pongo en null el sucesor
     jmp .borrar
 .unicoElem:
-    mov qword [rdi + lista_offset_first], NULL; pongo el last en null
+    mov qword [rdi + lista_offset_first], NULL; pongo el first en null
 .borrar:
     mov rdi, rcx
     cmp qword rsi, 0
