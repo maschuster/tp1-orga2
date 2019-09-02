@@ -694,17 +694,15 @@ hashTableNew:
     mov [r14 + hTable_offset_array], r15
 
     xor rcx, rcx; limpio contador
+    mov ecx, r12d
 .inicializarListas:
-    cmp r12d, ecx
-    je .fin
     push rcx
     sub rsp, 8
     call listNew
     add rsp, 8
     pop rcx
-    mov [r15 + rcx*8], rax
-    inc rcx
-    jmp .inicializarListas
+    mov [r15 + rcx*8 - 8], rax
+    loop .inicializarListas
 .fin:
     mov rax, r14
     pop r15
