@@ -7,6 +7,8 @@
 
 #include "lib.h"
 
+char* strings[10] = {"aa","bb","dd","ff","00","zz","cc","ee","gg","hh"};
+
 void test_hashTable(FILE *pfile){
     
 }
@@ -16,60 +18,49 @@ void test_list(FILE *pfile) {
     char *a, *b, *c;
     list_t* l1;
     // listAddFirst
-    
     fprintf(pfile,"==> listAddFirst\n");
+    l1 = listNew();    
+    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    listAddFirst(l1,strClone("PRIMERO"));
+    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    listDelete(l1,(funcDelete_t*)&strDelete);
     l1 = listNew();
+    listAddFirst(l1,strClone("PRIMERO"));
+    listAddFirst(l1,strClone("PRIMERO"));
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    listDelete(l1,(funcDelete_t*)&strDelete);
+    l1 = listNew();
     listAddFirst(l1,strClone("PRIMERO"));
     listAddFirst(l1,strClone("PRIMERO"));
     listAddFirst(l1,strClone("PRIMERO"));
-    listAddLast(l1,strClone("ULTIMO"));
-    listRemoveFirst(l1, (funcDelete_t*)&strDelete);
-    c = strClone("ULTIMO");
-    listAdd(l1,strClone("PRIMERO"),(funcCmp_t*)&strCmp);
-    //listRemove(l1, c, (funcCmp_t*)&strCmp, (funcDelete_t*)&strDelete);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-        /*
-    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    listDelete(l1,(funcDelete_t*)&strDelete);
     
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listAddFirst(l1,strClone("PRIMERO"));
-    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listDelete(l1,(funcDelete_t*)&strDelete);
-    l1 = listNew();
-    listAddFirst(l1,strClone("PRIMERO"));
-    listAddFirst(l1,strClone("PRIMERO"));
-    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listDelete(l1,(funcDelete_t*)&strDelete);
-    l1 = listNew();
-    listAddFirst(l1,strClone("PRIMERO"));
-    listAddFirst(l1,strClone("PRIMERO"));
-    listAddFirst(l1,strClone("PRIMERO"));
-    listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listDelete(l1,(funcDelete_t*)&strDelete);
     // listAddLast
     fprintf(pfile,"==> listAddLast\n");
     l1 = listNew();
     listAddLast(l1,strClone("ULTIMO"));
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
     l1 = listNew();
     listAddLast(l1,strClone("ULTIMO"));
     listAddLast(l1,strClone("ULTIMO"));
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
     l1 = listNew();
     listAddLast(l1,strClone("ULTIMO"));
     listAddLast(l1,strClone("ULTIMO"));
     listAddLast(l1,strClone("ULTIMO"));
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
+    
     // listAdd
     fprintf(pfile,"==> listAdd\n");
     l1 = listNew();
@@ -78,7 +69,7 @@ void test_list(FILE *pfile) {
     listAddFirst(l1,strClone("PRIMERO"));
     listAddLast(l1,strClone("ULTIMO"));
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
     l1 = listNew();
     listAddFirst(l1,strClone("PRIMERO"));
@@ -86,8 +77,9 @@ void test_list(FILE *pfile) {
     for(int i=0; i<5;i++)
         listAdd(l1,strClone(strings[i]),(funcCmp_t*)&strCmp);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
+    
     // listRemove
     fprintf(pfile,"==> listRemove\n");
     l1 = listNew();
@@ -103,8 +95,9 @@ void test_list(FILE *pfile) {
     listRemove(l1, "PRIMERO", (funcCmp_t*)&strCmp, (funcDelete_t*)&strDelete);
     listRemove(l1, "ULTIMO", (funcCmp_t*)&strCmp, (funcDelete_t*)&strDelete);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
+    
     // listRemoveFirst
     fprintf(pfile,"==> listRemoveFirst\n");
     l1 = listNew();
@@ -118,7 +111,7 @@ void test_list(FILE *pfile) {
     listRemoveFirst(l1, (funcDelete_t*)&strDelete);
     listRemoveFirst(l1, (funcDelete_t*)&strDelete);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
     // listRemoveLast
     fprintf(pfile,"==> listRemoveLast\n");
@@ -133,8 +126,9 @@ void test_list(FILE *pfile) {
     listRemoveLast(l1, (funcDelete_t*)&strDelete);
     listRemoveLast(l1, (funcDelete_t*)&strDelete);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,(funcDelete_t*)&strDelete);
+    /*
     // listRemove listRemoveFirst listRemoveLast
     fprintf(pfile,"==> listRemove listRemoveFirst listRemoveLast\n");
     l1 = listNew();
@@ -147,34 +141,34 @@ void test_list(FILE *pfile) {
     for(int i=0; i<10;i++)
         listAdd(l1,stringsLocal[i],(funcCmp_t*)&strCmp);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemove(l1, strings[2], (funcCmp_t*)&strCmp, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveLast(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveFirst(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveLast(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemove(l1, strings[2], (funcCmp_t*)&strCmp, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveFirst(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveLast(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemoveFirst(l1, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listRemove(l1, strings[2], (funcCmp_t*)&strCmp, 0);
     listPrint(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
-    listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
+    //listPrintReverse(l1,pfile,(funcPrint_t*)&strPrint); fprintf(pfile,"\n");
     listDelete(l1,0);
     for(int i=0; i<10;i++)
         free(stringsLocal[i]);

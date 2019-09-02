@@ -342,10 +342,13 @@ listAdd:
     mov r12, [rdi + lista_offset_first]; r12 <- nodoActual
     mov r13, rsi; data*
     mov r14, rdx; funCmp*
-    lea r15, [rdi + lista_offset_first]
-    mov rbx, rdi
+    lea r15, [rdi + lista_offset_first]; nodo**
+    mov rbx, rdi; lista*
 
 .recorrer:
+    cmp qword r12, NULL
+    je .agregarUltimo
+
     mov rsi, [r12 + nodo_offset_dato]; rdi <- dataNodo*
     mov rdi, r13; rsi <- data*
     sub rsp, 8;alineo pila
@@ -354,7 +357,7 @@ listAdd:
     cmp qword rax, 1; si el dato es más chico, lo agrego ?????? VER BIEN strCmp
     je .agregarNodo
 
-    lea r15, [rbx + nodo_offset_next]; avanzo nodo**
+    lea r15, [r12 + nodo_offset_next]; avanzo nodo**
     mov r12, [r15]; avanzo el nodo
     jmp .recorrer
 .agregarNodo:
@@ -366,20 +369,19 @@ listAdd:
     mov [rax + nodo_offset_dato], r13; guardo el dato*
     mov [rax + nodo_offset_next], r12; actualizo next del nuevo Nodo
     mov [r15], rax ;actualizo el puntero a siguiente con el nuevo nodo
-
-    cmp qword r12, NULL
-    je .cambiarLast
-
     mov [r12 + nodo_offset_prev], rax; actualizo el puntero a anterior del nodo siguiente
     mov r8, [r12 + nodo_offset_prev]; S1 R12 es NULL ESTO TIRA SEGFAULT
     mov [rax + nodo_offset_prev], r8; actualizo prev del nuevo Nodo
     jmp .fin
-.cambiarLast:
-    ;hay que ver el caso donde r12 es NULL porque llegó al final
-    mov r8, [rbx + lista_offset_last]
-    mov [rax + nodo_offset_prev], r8
-    mov [rbx + lista_offset_last], rax
+.agregarUltimo:
+    sub rsp, 8
+    mov rdi, rbx
+    mov rsi, r13
+    call listAddLast
+    add rsp, 8
 .fin:
+    pop rbx
+    pop r15
     pop r14
     pop r13
     pop r12
