@@ -34,7 +34,9 @@ void listPrintReverse(list_t* pList, FILE *pFile, funcPrint_t* fp) {
     fprintf(pFile,"%s", strClone("["));
     while(nodoActual != NULL){
         fp(nodoActual->data, pFile);
-        fprintf(pFile,"%s", strClone(","));
+        if(nodoActual->prev != NULL){
+            fprintf(pFile,"%s", strClone(","));
+        }
         nodoActual = nodoActual->prev;
     }
     fprintf(pFile,"%s", strClone("]"));

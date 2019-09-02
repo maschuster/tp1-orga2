@@ -366,12 +366,15 @@ listAdd:
     call malloc
     add rsp, 8
 
+    ;completo info nuevo nodo
     mov [rax + nodo_offset_dato], r13; guardo el dato*
     mov [rax + nodo_offset_next], r12; actualizo next del nuevo Nodo
+    mov r8, [r12 + nodo_offset_prev]; guardo el nodo previo a r12
+    mov [rax + nodo_offset_prev], r8; actualizo prev del nuevo nod
+
+    ;actualizo nodo anterior y posterior
     mov [r15], rax ;actualizo el puntero a siguiente con el nuevo nodo
     mov [r12 + nodo_offset_prev], rax; actualizo el puntero a anterior del nodo siguiente
-    mov r8, [r12 + nodo_offset_prev]; S1 R12 es NULL ESTO TIRA SEGFAULT
-    mov [rax + nodo_offset_prev], r8; actualizo prev del nuevo Nodo
     jmp .fin
 .agregarUltimo:
     sub rsp, 8
