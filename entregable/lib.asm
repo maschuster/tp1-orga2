@@ -2,6 +2,7 @@
 section .rodata
 null: db 'NULL', 0
 dataPointer: db '%p', 0
+printString: db '%s', 0
 corcheteIzq: db '[', 0
 corcheteDer: db ']', 0
 comma: db ',' , 0
@@ -210,17 +211,18 @@ strPrint:
     push rbp
     mov rbp, rsp
     call strLen
-    mov rdx, rdi
+    mov rdx, rdi;   rdx <- char*
     mov rdi, rsi;   rdi <- pFile
     xor rsi, rsi
-    cmp rax, 0
+    cmp qword rax, 0
     je .esNull
 .noEsNull:
-    mov rsi, rdx;   rsi <- char*
+    mov rsi, printString;   rsi <- "%s"
     call fprintf
     jmp .fin
 .esNull:
-    mov rsi, null
+    mov rsi, printString;   rsi <- "%s"
+    mov rdx, null
     call fprintf
 .fin:
     pop rbp
@@ -500,7 +502,8 @@ listRemoveFirst:
     sub rsp, 8
     mov rdi, [rcx + nodo_offset_dato]
     call rsi
-    add rsp, 8
+    add rsp, 8    
+    mov rsi, printString;   rsi <- "%s"
     pop rdi
 .borroNodo:
     call free
@@ -597,7 +600,8 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
 
     ;PONGO EL CORCHETE [
     mov rdi, r12;   rdi <- pFile*
-    mov rsi, corcheteIzq
+    mov rsi, printString
+    mov rdx, corcheteIzq
     call fprintf
 
     cmp qword [r15 + lista_offset_first], NULL;    me fijo si la lista es vacía
@@ -613,7 +617,8 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
     je .fin
     ;pongo la coma
     mov rdi, r12;   rdi <- pFile*
-    mov rsi, comma
+    mov rsi, printString
+    mov rdx, comma
     call fprintf
     ;busco el proximo nodo
     mov r14, [r14 + nodo_offset_next]
@@ -627,14 +632,16 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
     je .fin
     ;pongo la coma
     mov rdi, r12;   rdi <- pFile*
-    mov rsi, comma
+    mov rsi, printString
+    mov rdx, comma
     call fprintf
     ;busco el proximo nodo
-    mov r14, [r14 + nodo_offset_next] 
+    mov r14, [r14 + nodo_offset_next]
     jmp .imprimirDir
 .fin:
     mov rdi, r12;   rdi <- pFile*
-    mov rsi, corcheteDer
+    mov rsi, printString
+    mov rdx, corcheteDer
     call fprintf
     pop r15
     pop r14
@@ -649,6 +656,7 @@ listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
 
 
 hashTableNew:
+
     ret
 
 hashTableAdd:

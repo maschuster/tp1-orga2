@@ -237,7 +237,7 @@ void test_strings(FILE *pfile) {
 int main (void){
     FILE *pfile = fopen("salida.caso.propios.txt","w");
     //test_hashTable(pfile);
-    //test_strings(pfile);
+    test_strings(pfile);
     test_list(pfile);
     fclose(pfile);
     return 0;
