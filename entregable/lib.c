@@ -31,15 +31,21 @@ char* strSubstring(char* pString, uint32_t inicio, uint32_t fin) {
 
 void listPrintReverse(list_t* pList, FILE *pFile, funcPrint_t* fp) {
     listElem_t* nodoActual = pList->last;
-    fprintf(pFile,"%s", strClone("["));
+    char* corcheteIzq = strClone("[");
+    char* corcheteDer = strClone("]");
+    char* comma = strClone(",");
+    fprintf(pFile,"%s", corcheteIzq);
     while(nodoActual != NULL){
         fp(nodoActual->data, pFile);
         if(nodoActual->prev != NULL){
-            fprintf(pFile,"%s", strClone(","));
+            fprintf(pFile,"%s", comma);
         }
         nodoActual = nodoActual->prev;
     }
-    fprintf(pFile,"%s", strClone("]"));
+    fprintf(pFile,"%s", corcheteDer);
+    strDelete(corcheteDer);
+    strDelete(corcheteIzq);
+    strDelete(comma);
 }
 
 /** HashTable **/
