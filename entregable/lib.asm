@@ -715,6 +715,34 @@ hashTableNew:
 hashTableAdd:
     ;rdi <- hTable*
     ;rsi <- data*
+    push rbp
+    mov rbp, rsp
+
+    push r12
+    push r13
+
+    mov r12, rdi;   r12 <- hTable*
+    mov r13, rsi;   r13 <- data*
+
+    ;consigo el hash correspondiente
+    mov rdi, rsi;   rdi <- data*
+    mov rcx, [r12 + hTable_offset_funHash]; rcx <- funHash*
+    call rcx; rax <- hash
+
+    ;consigo la lista de la posicion del array correspondiente
+    xor rdx, rdx
+    mov ecx, [r12 + hTable_offset_size]; tamaño array
+    div ecx; deja en EDX el resto de la división de EAX(hash) por ECX(size)
+
+    ;tomo el array e indexo según el slot correspondiente haciendo luego la inserción
+    mov rcx, [r12 + hTable_offset_array]; rcx <- array
+    mov rdi, [rcx + rdx*8]; rdi <- lista*
+    mov rsi, r13; rsi <- data*
+    call listAddLast
+.fin:
+    pop r13
+    pop r12
+    pop rbp
     ret
     
 hashTableDeleteSlot:
