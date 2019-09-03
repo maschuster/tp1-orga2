@@ -59,16 +59,17 @@ uint32_t strHash(char* pString) {
 
 void hashTableRemoveAll(hashTable_t* pTable, void* data, funcCmp_t* fc, funcDelete_t* fd) {
     uint64_t slot = strHash(data) % pTable->size;
-    struct s_list *lista = (pTable->listArray + (uint64_t) slot*8);
+    struct s_list *lista = pTable->listArray[slot];
     listRemove(lista, data, fc, fd);
 }
 
 void hashTablePrint(hashTable_t* pTable, FILE *pFile, funcPrint_t* fp) {
     uint32_t pSize = pTable->size;
-    uint64_t i = 0;
-    struct s_list **list = (pTable->listArray);
+    uint32_t i = 0;
     while (i < pSize){
-        struct s_list *lista = (*list + i*8);
+        fprintf(pFile,"%i", i);
+        fprintf(pFile,"%s", " = ");
+        struct s_list *lista = pTable->listArray[i];
         listPrint(lista, pFile, fp);
         fprintf(pFile,"\n");
         i=i+1;
