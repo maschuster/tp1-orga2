@@ -747,11 +747,78 @@ hashTableAdd:
     
 hashTableDeleteSlot:
     ;rdi <- hTable*
-    ;rsi <- data*
+    ;esi <- slot
     ;rdx <- funDelete*
+    push rbp
+    mov rbp, rsp
+
+    push r12
+    push r13
+    push r14
+
+    xor r13, r13; limpio r13
+    mov r12, rdi;   r12 <- hTable*
+    mov r13d, esi;  r13d <- slot (int32)
+    mov r14, rdx;   r14 <- funDelete*
+
+    ;consigo la lista de la posicion del array correspondiente
+    mov eax, r13d; eax <- slot (int32)
+    xor rdx, rdx
+    mov ecx, [r12 + hTable_offset_size]; tamaño array
+    div ecx; deja en EDX el resto de la división de EAX(slot) por ECX(size)
+    mov r13d, edx
+
+    ;tomo el array e indexo según el slot y elimino la lista
+    mov rcx, [r12 + hTable_offset_array]; rcx <- array
+    mov rdi, [rcx + rdx*8]; rdi <- lista*
+    mov rsi, r14; rsi <- funDelete*
+    push rcx
+    call listDelete; elimino la lista
+
+    ;genero una lista nueva
+    call listNew
+    pop rcx
+    mov [rcx + r13*8], rax
+.fin:
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret
 
 hashTableDelete:
     ;rdi <- hTable*
     ;rsi <- funDelete*
+    push rbp
+    mov rbp, rsp
+
+    push r12
+    push r13
+    push r14
+   
+    mov r12, rdi; r12 <- hTable*
+    mov r13, rsi; r13 <- funDelete*
+    mov r14, [rdi + hTable_offset_array]; r14 <- array*
+    xor rcx, rcx; limpio contador
+    mov ecx, [rdi + hTable_offset_size]; ecx <- size
+
+.eliminarListas:
+    mov rdi, [r14 + rcx*8 - 8]; rdi <- lista*
+    mov rsi, r13; rsi <- funDelete*
+    push rcx
+    call listDelete
+    pop rcx
+    loop .eliminarListas
+.eliminarHashTable:
+    sub rsp, 8
+    mov rdi, r14
+    call free
+    mov rdi, r12
+    call free
+    add rsp, 8
+.fin:
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret

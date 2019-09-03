@@ -14,21 +14,18 @@ char* strings[10] = {"aa","bb","dd","ff","00","zz","cc","ee","gg","hh"};
 void test_hashTable(FILE *pfile) {
     char *a, *b, *c;
     hashTable_t *n;
-    n = hashTableNew(32, (funcHash_t*)&strHash);
     // strHash
     fprintf(pfile,"==> strHash\n");
     fprintf(pfile,"abeja=%i\n", strHash("abeja"));
     fprintf(pfile,"arco=%i\n", strHash("arco"));
     fprintf(pfile,"casa=%i\n", strHash("casa"));
     fprintf(pfile,"dado=%i\n", strHash("dado"));
-    
     // hashTableAdd
     fprintf(pfile,"==> hashTableAdd\n");
     n = hashTableNew(32, (funcHash_t*)&strHash);
     for(int s=0;s<64;s++) {
         for(int i=0;i<10;i++) {
             hashTableAdd(n, strClone(strings[i]));}}
-    /*
     // hashTableRemoveAll
     fprintf(pfile,"==> hashTableRemoveAll\n");
     for(int i=5;i<10;i++) {
@@ -41,7 +38,6 @@ void test_hashTable(FILE *pfile) {
         hashTableDeleteSlot(n,i,(funcDelete_t*)&strDelete);}
     hashTablePrint(n,pfile,(funcPrint_t*)&strPrint);
     hashTableDelete(n,(funcDelete_t*)&strDelete);
-    */
 }
 
 
