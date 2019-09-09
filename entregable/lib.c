@@ -15,10 +15,7 @@ char* strSubstring(char* pString, uint32_t inicio, uint32_t fin) {
         free(pString);
         return newStr;
     }
-    if(fin > len){
-        fin = len;
-    }
-    if(fin == len){
+    if(fin >= len){
         fin = len-1;
     }
     pString[fin+1] = (char) 0;

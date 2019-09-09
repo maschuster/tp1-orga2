@@ -71,9 +71,10 @@ strClone:
     push rbp
     mov rbp, rsp
 
+    push rdi
     call strLen
-    mov rdx, rdi    ;inicio string parámetro
-    
+    pop rdx
+
     mov rdi, rax    ;longitud string
     inc rdi         ;longitud nuevo string contando el 0 del final
     sub rsp, 8
@@ -83,14 +84,13 @@ strClone:
     add rsp, 8
 
     xor r8, r8      ;inicializo contador
-    cmp [rdx], byte 0;chequeo si la longitud es 0
-    je .fin         ;si la long es 0 voy al fin
 .ciclo:
     mov dil, [rdx + r8]     ;guardo letra temporalmente
+    cmp dil, byte 0  ;reviso si terminé de recorrer el string
+    je .fin
     mov [rax + r8], dil     ;escribo la letra en el nuevo string
     inc r8                  ;incremnto contador
-    cmp [rdx + r8], byte 0  ;reviso si terminé de recorrer el string
-    jne .ciclo
+    jmp .ciclo
 .fin:    
     mov [rax + r8], byte 0  ;si vengo del salto, pongo un 0 en la posición del malloc pedida. Si vengo del ciclo solo pongo 0 al final.
     pop rbp
@@ -100,24 +100,24 @@ strClone:
 
 strCmp:
 .ciclo:
-    mov cl, [rdi]
-    mov dl, [rsi]
+    mov cl, [rdi]; cl <- char stringA
+    mov dl, [rsi]; dl <- char stringB
     sub cl, dl
     jg .ganaA
     jl .ganaB
-    cmp [rdi], byte 0
+    cmp cl, byte 0
     je .terminaA
-    cmp [rsi], byte 0
+    cmp dl, byte 0
     je .terminaB
     inc rdi
     inc rsi
     jmp .ciclo
 .terminaA:
-    cmp [rsi], byte 0
+    cmp dl, byte 0
     je .empate
     jmp .ganaB
 .terminaB:
-    cmp [rdi], byte 0
+    cmp cl, byte 0
     je .empate
     jmp .ganaA
 .ganaA:
@@ -136,15 +136,18 @@ strConcat:
     push rbp
     mov rbp, rsp
 
+    push rdi
+    push rsi
     call strLen
+    pop rdi         ;posición stringB
     mov rcx, rax    ;longitud stringA
-    mov rdx, rdi
-    mov rdi, rsi    ;posición stringB
-    mov rsi, rdx    ;posicion stringA
+
     push rcx
     call strLen
     pop rcx         ;longitud stringA
+    pop rsi         ;posicion stringA
     mov rdx, rax    ;longitud stringB
+    
     add rax, rcx    ;tamaño nuevo string
     inc rax         ;tamaño nuevo string para pedir memoria
 
@@ -157,12 +160,14 @@ strConcat:
     pop rdx         ;longitud stringB
     pop rcx         ;longitud stringA
     pop rsi         ;posicion stringA
+
     mov rdi, rax    ;pongo en rdi la posición donde quiero poner stringA y luego concatenar stringB
     call strCopyFromTo  ;copioStringA
     mov r8, rsi     ;posicion stringA
     pop rsi         ;posicion stringB
     add rdi, rcx    ;agrego offset de stringA
     call strCopyFromTo  ;copioStringB
+
     sub rdi, rcx    ;quito offset stringA
     add rcx, rdx    ;agrego longitud stringB
     mov [rax + rcx], byte 0    ;termino el string
@@ -587,7 +592,7 @@ listDelete:
 
 
 
-listPrint:;FALTA AGREGAR CORCHETES Y COMAS Y EL CASO DE LA LISTA VACIA
+listPrint:
     ;rdi <- lista
     ;rsi <- pFile
     ;rdx <- funcPrint
@@ -681,7 +686,6 @@ hashTableNew:
 
     mov [r14 + hTable_offset_funHash], r13
     mov [r14 + hTable_offset_size], r12d
-    ; ESTO HAY QUE SETEARLO DESPUES: 
 .armarArray:
     mov dword eax, 8;pongo 8 porque necesito 8 bytes para tener un puntero a lista
     mul r12d; multiplico por el tamaño indicado en esi (int32)
