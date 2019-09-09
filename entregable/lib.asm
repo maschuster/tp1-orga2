@@ -61,7 +61,7 @@ strLen:
 .ciclo: mov cl, [rdi + rax]
         cmp cl, 0       ;comparo con 0
         je .fin
-        inc rax         ;incremento contador
+        inc eax         ;incremento contador
         jmp .ciclo
 .fin:   ret
 
@@ -72,26 +72,25 @@ strClone:
     mov rbp, rsp
 
     call strLen
-    mov rcx, rax    ;longitud string
     mov rdx, rdi    ;inicio string parámetro
     
     mov rdi, rax    ;longitud string
     inc rdi         ;longitud nuevo string contando el 0 del final
+    sub rsp, 8
     push rdx        ;guardo inicio string parámetro
-    sub rsp, 8      ;alineo pila
-    call malloc     ;rax <- nuevoString
-    add rsp, 8      ;vuelvo a estado anterior
-    pop rdx         ; rdx <- inicio String parámetro
+    call malloc
+    pop rdx
+    add rsp, 8
 
     xor r8, r8      ;inicializo contador
-    cmp [rdx], byte 0;chequeo si termino el string
-    je .fin
+    cmp [rdx], byte 0;chequeo si la longitud es 0
+    je .fin         ;si la long es 0 voy al fin
 .ciclo:
     mov dil, [rdx + r8]     ;guardo letra temporalmente
-    mov [rax + r8], dil     ;escribo la letra en nuevoString
+    mov [rax + r8], dil     ;escribo la letra en el nuevo string
     inc r8                  ;incremnto contador
     cmp [rdx + r8], byte 0  ;reviso si terminé de recorrer el string
-    je .ciclo
+    jne .ciclo
 .fin:    
     mov [rax + r8], byte 0  ;si vengo del salto, pongo un 0 en la posición del malloc pedida. Si vengo del ciclo solo pongo 0 al final.
     pop rbp
@@ -129,7 +128,7 @@ strCmp:
     jmp .fin
 .empate:
     mov dword eax, 0
-.fin:
+.fin:    
     ret
 
 
@@ -209,9 +208,11 @@ strCopyFromTo:
 
 
 strDelete:
-    sub rsp, 8
+    push rbp
+    mov rbp, rsp
+
     call free
-    add rsp, 8
+    pop rbp
     ret
 
 
@@ -222,17 +223,14 @@ strPrint:
     mov rdx, rdi;   rdx <- char*
     mov rdi, rsi;   rdi <- pFile
     xor rsi, rsi
+    mov rsi, printString;   rsi <- "%s"
     cmp qword rax, 0
     je .esNull
-.noEsNull:
-    mov rsi, printString;   rsi <- "%s"
-    call fprintf
     jmp .fin
 .esNull:
-    mov rsi, printString;   rsi <- "%s"
     mov rdx, null
-    call fprintf
 .fin:
+    call fprintf
     pop rbp
     ret
 
@@ -364,7 +362,7 @@ listAdd:
     sub rsp, 8;alineo pila
     call r14; llamo funCmp
     add rsp, 8;alineo pila
-    cmp qword rax, 1; si el dato es más chico, lo agrego ?????? VER BIEN strCmp
+    cmp dword eax, 1; si el dato es más chico, lo agrego ?????? VER BIEN strCmp
     je .agregarNodo
 
     lea r15, [r12 + nodo_offset_next]; avanzo nodo**
@@ -433,7 +431,7 @@ listRemove:
     call r14; llamo a la función para comparar
     pop rdx
 
-    cmp byte al, NULL; me fijo si funCmp dio 0 y debo borrarlo
+    cmp dword eax, NULL; me fijo si funCmp dio 0 y debo borrarlo
     je .deleteCmp
 
     lea r12, [rbx + nodo_offset_next]
