@@ -100,9 +100,10 @@ strClone:
 
 strCmp:
 .ciclo:
-    mov cl, [rdi]; cl <- char stringA
-    mov dl, [rsi]; dl <- char stringB
-    sub cl, dl
+    mov cl, [rdi]
+    mov dl, [rsi]
+    mov r8b, cl
+    sub r8b, dl
     jg .ganaA
     jl .ganaB
     cmp cl, byte 0
@@ -136,18 +137,15 @@ strConcat:
     push rbp
     mov rbp, rsp
 
-    push rdi
-    push rsi
     call strLen
-    pop rdi         ;posición stringB
     mov rcx, rax    ;longitud stringA
-
+    mov rdx, rdi
+    mov rdi, rsi    ;posición stringB
+    mov rsi, rdx    ;posicion stringA
     push rcx
     call strLen
     pop rcx         ;longitud stringA
-    pop rsi         ;posicion stringA
     mov rdx, rax    ;longitud stringB
-    
     add rax, rcx    ;tamaño nuevo string
     inc rax         ;tamaño nuevo string para pedir memoria
 
@@ -160,14 +158,12 @@ strConcat:
     pop rdx         ;longitud stringB
     pop rcx         ;longitud stringA
     pop rsi         ;posicion stringA
-
     mov rdi, rax    ;pongo en rdi la posición donde quiero poner stringA y luego concatenar stringB
     call strCopyFromTo  ;copioStringA
     mov r8, rsi     ;posicion stringA
     pop rsi         ;posicion stringB
     add rdi, rcx    ;agrego offset de stringA
     call strCopyFromTo  ;copioStringB
-
     sub rdi, rcx    ;quito offset stringA
     add rcx, rdx    ;agrego longitud stringB
     mov [rax + rcx], byte 0    ;termino el string
@@ -454,7 +450,6 @@ listRemove:
     mov [r12], r8;actualizo el puntero a siguiente
     
     mov r9, [rbx + nodo_offset_prev]; tomo el puntero al nodo anterior
-    ;OJO SI R8 ES NULL PORQUE SIGNIFICA QUE TERMINÓ
     cmp qword r8, NULL
     je .cambiarLast
     mov [r8 + nodo_offset_prev], r9; actualizo el puntero a anterior del nodo siguiente
