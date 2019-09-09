@@ -1,0 +1,8 @@
+-) Revisar los retornos de las funciones (int32)
+-) Revisar qué devuelven las funciones que nos dan (funCmp devuelve int32) y chequear consistencia de llamados a esas funciones
+-) Revisar funciones String que llaman a otras funciones de assembly (strLen o strConCat)
+
+-) Agregar tests main.c
+-) Exportar a gitlab exactas
+
+Opcional) Optimizar código
