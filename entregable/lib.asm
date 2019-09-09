@@ -209,7 +209,9 @@ strCopyFromTo:
 
 
 strDelete:
+    sub rsp, 8
     call free
+    add rsp, 8
     ret
 
 
