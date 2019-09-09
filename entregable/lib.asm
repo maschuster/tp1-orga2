@@ -77,21 +77,21 @@ strClone:
     
     mov rdi, rax    ;longitud string
     inc rdi         ;longitud nuevo string contando el 0 del final
-    push rcx        ;guardo longitud string
     push rdx        ;guardo inicio string parámetro
-    call malloc
-    pop rdx
-    pop rcx
+    sub rsp, 8      ;alineo pila
+    call malloc     ;rax <- nuevoString
+    add rsp, 8      ;vuelvo a estado anterior
+    pop rdx         ; rdx <- inicio String parámetro
 
     xor r8, r8      ;inicializo contador
-    cmp [rdx], byte 0;chequeo si la longitud es 0
-    je .fin         ;si la long es 0 voy al fin
+    cmp [rdx], byte 0;chequeo si termino el string
+    je .fin
 .ciclo:
     mov dil, [rdx + r8]     ;guardo letra temporalmente
-    mov [rax + r8], dil     ;escribo la letra en el nuevo string
+    mov [rax + r8], dil     ;escribo la letra en nuevoString
     inc r8                  ;incremnto contador
     cmp [rdx + r8], byte 0  ;reviso si terminé de recorrer el string
-    jne .ciclo
+    je .ciclo
 .fin:    
     mov [rax + r8], byte 0  ;si vengo del salto, pongo un 0 en la posición del malloc pedida. Si vengo del ciclo solo pongo 0 al final.
     pop rbp
@@ -122,14 +122,14 @@ strCmp:
     je .empate
     jmp .ganaA
 .ganaA:
-    mov qword rax, -1
+    mov dword eax, -1
     jmp .fin
 .ganaB:
-    mov qword rax, 1
+    mov dword eax, 1
     jmp .fin
 .empate:
-    mov qword rax, 0
-.fin:    
+    mov dword eax, 0
+.fin:
     ret
 
 
