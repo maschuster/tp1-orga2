@@ -137,14 +137,18 @@ strConcat:
     push rbp
     mov rbp, rsp
 
+    push rdi
+    push rsi
     call strLen
+    pop rdi
     mov rcx, rax    ;longitud stringA
-    mov rdx, rdi
-    mov rdi, rsi    ;posición stringB
-    mov rsi, rdx    ;posicion stringA
+    push rdi
     push rcx
     call strLen
     pop rcx         ;longitud stringA
+    pop rdi         ;posicoin stringB
+    pop rsi         ;posicion stringA
+
     mov rdx, rax    ;longitud stringB
     add rax, rcx    ;tamaño nuevo string
     inc rax         ;tamaño nuevo string para pedir memoria
